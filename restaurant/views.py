@@ -93,9 +93,13 @@ class FoodCategoriesAPI(APIView):
 
 
 class FoodsAPI(APIView):
-
+    
     def get(self, request):
-        foods = FoodItem.objects.all()
+        restaurant_slug = request.query_params.get("restaurant_slug")
+        if restaurant_slug:
+            foods = FoodItem.objects.filter(restaurant_slug=restaurant_slug)
+        else:
+            foods = FoodItem.objects.all()
         serializer = FoodItemSerializer(foods, many=True)
         return Response(serializer.data)
 

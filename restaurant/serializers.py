@@ -23,11 +23,13 @@ class FoodCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodCategory
         fields = ["name"]
+        
+    
 
 
 class FoodItemSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source="category.name", read_only=True)
-    restaurant_name = serializers.CharField(
+    category_name = serializers.ReadOnlyField(source="category.name", read_only=True)
+    restaurant_name = serializers.ReadOnlyField(
         source="restaurant.name", read_only=True
     )
 
@@ -43,4 +45,6 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "category",
             "category_name",
             "restaurant_name",
+            "restaurant_slug"
         ]
+        read_only_fields = ["restaurant_slug"]
