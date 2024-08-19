@@ -20,7 +20,7 @@ class FoodCategory(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="categories")
     
     def __str__(self):
-        return f"{self.name} - {self.restaurant.name}"
+        return f"{self.name}"
     
 class FoodItem(models.Model):
     name = models.CharField(max_length=255)
@@ -30,6 +30,7 @@ class FoodItem(models.Model):
     is_available = models.BooleanField(default=True)
     image = models.ImageField(upload_to="food/images/", null=True, blank=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="foods", blank=True, null=True)
+    
     def __str__(self):
-        return f"{self.name} - {self.category.restaurant.name}"
+        return f"{self.name}"
     

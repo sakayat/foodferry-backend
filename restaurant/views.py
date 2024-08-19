@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .models import Restaurant, FoodCategory, FoodItem
-from .serializers import RestaurantSerializer, RestaurantFoodCategorySerializer, FoodCategorySerializer, FoodItemSerializer
+from .serializers import (
+    RestaurantSerializer,
+    RestaurantFoodCategorySerializer,
+    FoodCategorySerializer,
+    FoodItemSerializer,
+)
 from rest_framework.response import Response
 from rest_framework import status
 from accounts.permissions import IsRestaurantOwner
@@ -25,14 +30,15 @@ class RestaurantAPI(APIView):
             )
 
     def post(self, request):
-        restaurant = Restaurant.objects.get(owner=request.user)
+
+        restaurant = Restaurant.objects.filter(owner=request.user)
         if restaurant:
-            return Response("already register")
+            return Response("already exits", status=status.HTTP_302_FOUND)
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 class UpdateRestaurantAPI(APIView):
@@ -85,22 +91,27 @@ class FoodCategoriesAPI(APIView):
         serializer = FoodCategorySerializer(categories, many=True)
         return Response(serializer.data)
 
+
 class FoodsAPI(APIView):
-    
+
     def get(self, request):
         foods = FoodItem.objects.all()
         serializer = FoodItemSerializer(foods, many=True)
         return Response(serializer.data)
-    
+
+
 class FoodItemAPI(APIView):
-    
+
     serializer_class = FoodItemSerializer
     permission_classes = [IsRestaurantOwner]
 
     def get(self, request):
-        categories = FoodItem.objects.filter(restaurant=request.user.restaurant)
-        serializer = FoodItemSerializer(categories, many=True)
-        return Response(serializer.data)
+        try:
+            restaurant = FoodItem.objects.filter(restaurant=request.user.restaurant)
+            serializer = FoodItemSerializer(restaurant, many=True)
+            return Response(serializer.data)
+        except AttributeError:
+            return Response({"error": "User does not have a restaurant"})
 
     def post(self, request):
         serializer = FoodItemSerializer(data=request.data)
@@ -108,12 +119,12 @@ class FoodItemAPI(APIView):
             serializer.save(restaurant=request.user.restaurant)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+
 class UpdateFoodItemAPI(APIView):
-    
+
     serializer_class = FoodItemSerializer
-    
+
     def get(self, request, pk):
         try:
             food = FoodItem.objects.get(pk=pk)
@@ -121,7 +132,7 @@ class UpdateFoodItemAPI(APIView):
             return Response(serializer.data)
         except FoodItem.DoesNotExist:
             return Response({"error": "item not found"})
-    
+
     def put(self, request, pk):
         try:
             food = FoodItem.objects.get(pk=pk)
@@ -132,7 +143,3 @@ class UpdateFoodItemAPI(APIView):
             return Response(serializer.errors)
         except FoodItem.DoesNotExist:
             return Response({"error": "item not found"})
-    
-    
-     
-    
