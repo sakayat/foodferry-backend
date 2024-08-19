@@ -33,6 +33,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         account.is_active = False
         account.save()
         return account
+    
+
+class UserLoginSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ["username", "password"]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
