@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from .models import CustomUser
 
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
-    
+
     class Meta:
         model = CustomUser
         fields = [
@@ -13,8 +14,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "password",
             "confirm_password",
         ]
-        
-    
+
     def save(self):
         username = self.validated_data["username"]
         email = self.validated_data["email"]
@@ -30,5 +30,21 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         account = CustomUser(username=username, email=email)
         account.set_password(password)
         
+        account.is_active = False
         account.save()
         return account
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "role",
+        ]
+        read_only_fields = ["id", "username", "email", "role"]
