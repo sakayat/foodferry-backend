@@ -110,5 +110,29 @@ class FoodItemAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-        
+class UpdateFoodItemAPI(APIView):
+    
+    serializer_class = FoodItemSerializer
+    
+    def get(self, request, pk):
+        try:
+            food = FoodItem.objects.get(pk=pk)
+            serializer = FoodItemSerializer(food, many=False)
+            return Response(serializer.data)
+        except FoodItem.DoesNotExist:
+            return Response({"error": "item not found"})
+    
+    def put(self, request, pk):
+        try:
+            food = FoodItem.objects.get(pk=pk)
+            serializer = FoodItemSerializer(food, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        except FoodItem.DoesNotExist:
+            return Response({"error": "item not found"})
+    
+    
+     
     
