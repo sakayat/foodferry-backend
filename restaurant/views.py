@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .models import Restaurant, FoodCategory, FoodItem
-from .serializers import RestaurantSerializer, FoodCategorySerializer
+from .serializers import RestaurantSerializer, RestaurantFoodCategorySerializer, FoodCategorySerializer, FoodItemSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from accounts.permissions import IsRestaurantOwner
 from rest_framework.permissions import IsAuthenticated
+
 
 # Create your views here.
 class RestaurantAPI(APIView):
@@ -62,19 +63,52 @@ class UpdateRestaurantAPI(APIView):
 
 class FoodCategoryAPI(APIView):
 
-    serializer_class = FoodCategorySerializer
+    serializer_class = RestaurantFoodCategorySerializer
     permission_classes = [IsRestaurantOwner]
 
     def get(self, request):
         categories = FoodCategory.objects.filter(restaurant=request.user.restaurant)
-        serializer = FoodCategorySerializer(categories, many=True)
+        serializer = RestaurantFoodCategorySerializer(categories, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = FoodCategorySerializer(data=request.data)
+        serializer = RestaurantFoodCategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(restaurant=request.user.restaurant)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class FoodCategoriesAPI(APIView):
+    def get(self, request):
+        categories = FoodCategory.objects.all()
+        serializer = FoodCategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+class FoodsAPI(APIView):
+    
+    def get(self, request):
+        foods = FoodItem.objects.all()
+        serializer = FoodItemSerializer(foods, many=True)
+        return Response(serializer.data)
+    
+class FoodItemAPI(APIView):
+    
+    serializer_class = FoodItemSerializer
+    permission_classes = [IsRestaurantOwner]
+
+    def get(self, request):
+        categories = FoodItem.objects.filter(restaurant=request.user.restaurant)
+        serializer = FoodItemSerializer(categories, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = FoodItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(restaurant=request.user.restaurant)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+        
+    

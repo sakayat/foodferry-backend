@@ -29,7 +29,7 @@ class FoodItem(models.Model):
     category = models.ForeignKey(FoodCategory, on_delete=models.CASCADE)
     is_available = models.BooleanField(default=True)
     image = models.ImageField(upload_to="food/images/", null=True, blank=True)
-    
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="foods", blank=True, null=True)
     def __str__(self):
         return f"{self.name} - {self.category.restaurant.name}"
     
