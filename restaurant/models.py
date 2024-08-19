@@ -13,3 +13,23 @@ class Restaurant(models.Model):
     
     def __str__(self) -> str:
         return f"restaurant - {self.name}"
+    
+    
+class FoodCategory(models.Model):
+    name = models.CharField(max_length=100)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="categories")
+    
+    def __str__(self):
+        return f"{self.name} - {self.restaurant.name}"
+    
+class FoodItem(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    category = models.ForeignKey(FoodCategory, on_delete=models.CASCADE)
+    is_available = models.BooleanField(default=True)
+    image = models.ImageField(upload_to="food/images/", null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.name} - {self.category.restaurant.name}"
+    
