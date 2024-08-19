@@ -147,3 +147,16 @@ class UpdateFoodItemAPI(APIView):
             return Response(serializer.errors)
         except FoodItem.DoesNotExist:
             return Response({"error": "item not found"})
+        
+
+class FoodCategoryItemAPI(APIView):
+    
+    def get(self, request):
+        category_slug = request.query_params.get("category")
+        if category_slug:
+            category = FoodCategory.objects.get(slug=category_slug)
+            food_items = FoodItem.objects.filter(category=category)
+        else:
+            food_items = FoodItem.objects.all()
+        serializer = FoodItemSerializer(food_items, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
