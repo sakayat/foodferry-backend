@@ -95,9 +95,9 @@ class FoodCategoriesAPI(APIView):
 class FoodsAPI(APIView):
     
     def get(self, request):
-        restaurant_slug = request.query_params.get("restaurant_slug")
-        if restaurant_slug:
-            foods = FoodItem.objects.filter(restaurant_slug=restaurant_slug)
+        restaurant_query = request.query_params.get("restaurant")
+        if restaurant_query:
+            foods = FoodItem.objects.filter(restaurant_slug=restaurant_query)
         else:
             foods = FoodItem.objects.all()
         serializer = FoodItemSerializer(foods, many=True)
@@ -152,9 +152,9 @@ class UpdateFoodItemAPI(APIView):
 class FoodCategoryItemAPI(APIView):
     
     def get(self, request):
-        category_slug = request.query_params.get("category")
-        if category_slug:
-            category = FoodCategory.objects.get(slug=category_slug)
+        category_query = request.query_params.get("category")
+        if category_query:
+            category = FoodCategory.objects.get(slug=category_query)
             food_items = FoodItem.objects.filter(category=category)
         else:
             food_items = FoodItem.objects.all()
