@@ -28,6 +28,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodItem
         fields = "__all__"
+        read_only_fields = ["restaurant"]
 
 
 
