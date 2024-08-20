@@ -64,6 +64,18 @@ class UpdateCartItem(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ClearCartItemsAPI(APIView):
+
+    def post(self, request):
+        cart_items = Cart.objects.filter(user=request.user)
+        if not cart_items:
+            return Response("Cart is already empty", status=status.HTTP_200_OK)
+        cart_items.delete()
+        return Response(
+            {"details": "Cart items removed successfully"}, status=status.HTTP_200_OK
+        )
+
+
 class CartItemsAPI(APIView):
 
     permission_classes = [IsAuthenticated]
