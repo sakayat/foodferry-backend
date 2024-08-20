@@ -9,6 +9,7 @@ urlpatterns = [
     path("api/auth", include("rest_framework.urls")),
     path("api/", include("accounts.urls")),
     path("api/", include("restaurant.urls")),
+    path("api/", include("carts.urls")),
 ]
 
 if settings.DEBUG:
