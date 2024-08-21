@@ -14,10 +14,10 @@ from .views import (
 router = DefaultRouter()
 
 urlpatterns = [
-    path("create-restaurant/", RestaurantAPI.as_view(), name="restaurant"),
-    path("update-restaurant/", UpdateRestaurantAPI.as_view(), name="update"),
-    path("restaurant-food-category/", FoodCategoryAPI.as_view(), name="food-category"),
-    path("food-categories/", FoodCategoriesAPI.as_view(), name="food-categories"),
+    path("create/", RestaurantAPI.as_view(), name="restaurant"),
+    path("update/", UpdateRestaurantAPI.as_view(), name="update"),
+    path("food-category/", FoodCategoryAPI.as_view(), name="food-category"),
+    path("list-categories/", FoodCategoriesAPI.as_view(), name="food-categories"),
     path("foods/", FoodsAPI.as_view(), name="foods"),
     path("add-food-item/", FoodItemAPI.as_view(), name="add-food-item"),
     path("update-food/<int:pk>/", UpdateFoodItemAPI.as_view(), name="update-food"),
