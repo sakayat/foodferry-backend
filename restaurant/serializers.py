@@ -15,14 +15,14 @@ class RestaurantFoodCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodCategory
         fields = "__all__"
-        read_only_fields = ["restaurant"]
+
 
 
 class FoodCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FoodCategory
-        fields = ["name"]
+        fields = "__all__"
         
     
 
@@ -38,6 +38,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "name_slug",
             "description",
             "price",
             "is_available",
@@ -48,3 +49,5 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "restaurant_slug"
         ]
         read_only_fields = ["restaurant_slug"]
+        
+        

@@ -19,7 +19,8 @@ class Restaurant(models.Model):
 class FoodCategory(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True, null=True)
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="categories")
+    image = models.ImageField(upload_to="categories/images", blank=True, null=True)
+    # restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="categories")
     
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -37,10 +38,7 @@ class FoodItem(models.Model):
     image = models.ImageField(upload_to="food/images/", null=True, blank=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="foods", blank=True, null=True)
     restaurant_slug = models.SlugField(unique=True, blank=True, null=True)
-    
-    def save(self, *args, **kwargs):
-        self.restaurant_slug = slugify(self.restaurant.name)
-        super().save(*args, **kwargs)
+    name_slug = models.SlugField(unique=True, blank=True, null=True)
     
     def __str__(self):
         return f"{self.name}"

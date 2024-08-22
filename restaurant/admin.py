@@ -9,6 +9,7 @@ class FoodCategoryAdmin(admin.ModelAdmin):
 
 class FoodItemAdmin(admin.ModelAdmin):
     prepopulated_fields = {"restaurant_slug": ["name"]}
+    prepopulated_fields = {"name_slug": ["name"]}
 
 admin.site.register(Restaurant)
 admin.site.register(FoodItem, FoodItemAdmin)

@@ -73,14 +73,14 @@ class FoodCategoryAPI(APIView):
     permission_classes = [IsRestaurantOwner]
 
     def get(self, request):
-        categories = FoodCategory.objects.filter(restaurant=request.user.restaurant)
-        serializer = RestaurantFoodCategorySerializer(categories, many=True)
+        categories = FoodCategory.objects.all()
+        serializer = FoodCategorySerializer(categories, many=True)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = RestaurantFoodCategorySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(restaurant=request.user.restaurant)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -123,6 +123,7 @@ class FoodItemAPI(APIView):
             serializer.save(restaurant=request.user.restaurant)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class UpdateFoodItemAPI(APIView):
