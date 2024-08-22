@@ -124,7 +124,12 @@ class FoodItemAPI(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+class FoodDetailsAPI(APIView):
+    
+    def get(self, request, slug):
+        food = FoodItem.objects.get(name_slug=slug)
+        serializer= FoodItemSerializer(food, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UpdateFoodItemAPI(APIView):
 

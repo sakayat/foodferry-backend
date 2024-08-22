@@ -8,7 +8,8 @@ from .views import (
     FoodsAPI,
     FoodItemAPI,
     UpdateFoodItemAPI,
-    FoodCategoryItemAPI
+    FoodCategoryItemAPI,
+    FoodDetailsAPI
 )
 
 router = DefaultRouter()
@@ -22,4 +23,5 @@ urlpatterns = [
     path("add-food-item/", FoodItemAPI.as_view(), name="add-food-item"),
     path("update-food/<int:pk>/", UpdateFoodItemAPI.as_view(), name="update-food"),
     path("food-items/", FoodCategoryItemAPI.as_view(), name="food-items"),
+    path("food-details/<slug:slug>/", FoodDetailsAPI.as_view(), name="food-details"),
 ]
