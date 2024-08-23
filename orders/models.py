@@ -6,12 +6,12 @@ from restaurant.models import FoodItem
 # Create your models here.
 class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    phone = models.PositiveIntegerField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=20, default="Dhaka")
-    postal_code = models.PositiveIntegerField(max_length=10, blank=True, null=True)
+    postal_code = models.PositiveIntegerField(blank=True, null=True)
     payment_method = models.CharField(max_length=30, default="Cash on delivery")
     status = models.CharField(max_length=30, default="pending")
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)

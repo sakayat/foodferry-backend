@@ -127,7 +127,7 @@ class FoodItemAPI(APIView):
 class FoodDetailsAPI(APIView):
     
     def get(self, request, slug):
-        food = FoodItem.objects.get(name_slug=slug)
+        food = FoodItem.objects.get(slug=slug)
         serializer= FoodItemSerializer(food, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -166,3 +166,5 @@ class FoodCategoryItemAPI(APIView):
             food_items = FoodItem.objects.all()
         serializer = FoodItemSerializer(food_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
