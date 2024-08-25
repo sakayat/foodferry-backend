@@ -14,13 +14,13 @@ class AddToCartAPI(APIView):
 
     serializer_class = CartItemSerializer
 
-    def post(self, request, id):
+    def post(self, request, slug):
         quantity = request.data.get("quantity")
 
         if not quantity:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        food_item = get_object_or_404(FoodItem, id=id)
+        food_item = get_object_or_404(FoodItem, slug=slug)
 
         cart, created = Cart.objects.get_or_create(user=request.user)
 
