@@ -11,7 +11,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    payment_method = models.CharField(max_length=30, choices=[("cash on deliver", ("Cash on delivery"))])
+    payment_method = models.CharField(max_length=30, null=True, blank=True)
     status = models.CharField(max_length=30, default="pending")
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)

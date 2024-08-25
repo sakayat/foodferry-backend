@@ -18,7 +18,7 @@ class CreateOrderAPI(APIView):
         cart_items = CartItem.objects.filter(cart__user=request.user)
 
         if not cart_items:
-            return Response({"error": "items not found"})
+            return Response({"error": "cart item empty"})
 
         subtotal = sum(item.quantity * item.food_item.price for item in cart_items)
 
