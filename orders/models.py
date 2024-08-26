@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import CustomUser
+from carts.models import CartItem
 from restaurant.models import FoodItem
 
 
@@ -26,8 +27,12 @@ class Order(models.Model):
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
     item_name = models.CharField(max_length=100)
+    item_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    quantity = models.PositiveIntegerField(default=1)
+    item_image = models.CharField(max_length=255, blank=True, null=True)
+    restaurant=models.CharField(max_length=100, blank=True, null=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
-    total = models.PositiveIntegerField(default=1)
     
+
     def __str__(self) -> str:
         return self.item_name

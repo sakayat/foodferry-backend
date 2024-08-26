@@ -46,8 +46,11 @@ class CreateOrderAPI(APIView):
             OrderDetails.objects.create(
                 order=order,
                 item_name=item.food_item.name,
+                item_price=item.food_item.price,
+                quantity=item.quantity,
+                item_image=item.food_item.image,
+                restaurant=item.food_item.restaurant.name,
                 subtotal=item.quantity * item.food_item.price,
-                total=item.quantity,
             )
 
         cart_items.delete()

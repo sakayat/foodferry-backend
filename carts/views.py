@@ -64,6 +64,7 @@ class UpdateCartItem(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class ClearCartItemsAPI(APIView):
 
     def post(self, request):
