@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 class AddToCartAPI(APIView):
 
     serializer_class = CartItemSerializer
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, slug):
         quantity = request.data.get("quantity")
@@ -39,6 +40,7 @@ class AddToCartAPI(APIView):
 class UpdateCartItem(APIView):
 
     serializer_class = CartItemSerializer
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, id):
         try:
@@ -64,8 +66,23 @@ class UpdateCartItem(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class DeleteCartItem(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, id):
+        cart_item = request.user.cart.items.get(id=id)
+        cart_item.delete()
+        return Response(
+                {"details": "Cart item removed successfully"}, status=status.HTTP_200_OK
+            )
+            
+        
+
 
 class ClearCartItemsAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         cart_items = Cart.objects.filter(user=request.user)
