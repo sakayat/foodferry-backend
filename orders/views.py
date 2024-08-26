@@ -18,7 +18,9 @@ class CreateOrderAPI(APIView):
         cart_items = CartItem.objects.filter(cart__user=request.user)
 
         if not cart_items:
-            return Response({"error": "cart item empty"})
+            return Response(
+                {"error": "cart item empty"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         subtotal = sum(item.quantity * item.food_item.price for item in cart_items)
 
@@ -33,6 +35,7 @@ class CreateOrderAPI(APIView):
             first_name=request.data.get("first_name"),
             last_name=request.data.get("last_name"),
             payment_method=request.data.get("payment_method"),
+            address=request.data.get("address"),
             status="pending",
             subtotal=subtotal,
             total=total,
