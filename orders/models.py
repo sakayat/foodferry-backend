@@ -31,6 +31,7 @@ class OrderDetails(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     item_image = models.CharField(max_length=255, blank=True, null=True)
     restaurant=models.CharField(max_length=100, blank=True, null=True)
+    status=models.CharField(max_length=20, blank=True, null=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     
 

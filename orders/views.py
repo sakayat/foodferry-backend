@@ -50,6 +50,7 @@ class CreateOrderAPI(APIView):
                 quantity=item.quantity,
                 item_image=item.food_item.image,
                 restaurant=item.food_item.restaurant.name,
+                status=order.status,
                 subtotal=item.quantity * item.food_item.price,
             )
 
