@@ -122,8 +122,6 @@ class FoodsAPI(APIView):
         return Response(serializer.data)
 
 
-
-
 class FoodItemAPI(APIView):
 
     serializer_class = FoodItemSerializer
@@ -145,6 +143,28 @@ class FoodItemAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class RestaurantFoodsAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        restaurant = FoodItem.objects.filter(restaurant=request.user.restaurant)
+        serializer = FoodItemSerializer(restaurant, many=True)
+        return Response(serializer.data)
+
+
+class RemoveRestaurantFoodAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, id):
+        try:
+            item = FoodItem.objects.get(restaurant=request.user.restaurant, id=id)
+            item.delete()
+            return Response({"item deleted successfully"}, status=status.HTTP_200_OK)
+        except FoodItem.DoesNotExist:
+            return Response({"error": "item not found"})
+
+
 class FoodDetailsAPI(APIView):
 
     def get(self, request, slug):
@@ -159,7 +179,7 @@ class UpdateFoodItemAPI(APIView):
 
     def get(self, request, pk):
         try:
-            food = FoodItem.objects.get(pk=pk)
+            food = FoodItem.objects.get(restaurant=request.user.restaurant, pk=pk)
             serializer = FoodItemSerializer(food, many=False)
             return Response(serializer.data)
         except FoodItem.DoesNotExist:
@@ -167,10 +187,10 @@ class UpdateFoodItemAPI(APIView):
 
     def put(self, request, pk):
         try:
-            food = FoodItem.objects.get(pk=pk)
+            food = FoodItem.objects.get(restaurant=request.user.restaurant, pk=pk)
             serializer = FoodItemSerializer(food, data=request.data, partial=True)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(restaurant=request.user.restaurant)
                 return Response(serializer.data)
             return Response(serializer.errors)
         except FoodItem.DoesNotExist:
@@ -192,7 +212,15 @@ class FoodCategoryItemAPI(APIView):
 
 class FoodTagsAPI(APIView):
 
+    serializer_class = FoodTagSerializer
     permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = FoodTagSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         tags = FoodTag.objects.all()
