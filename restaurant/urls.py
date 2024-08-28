@@ -1,6 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from .views import (
+    RestaurantOwnerInfoAPI,
     RestaurantAPI,
     UpdateRestaurantAPI,
     FoodCategoryAPI,
@@ -9,12 +10,14 @@ from .views import (
     FoodItemAPI,
     UpdateFoodItemAPI,
     FoodCategoryItemAPI,
-    FoodDetailsAPI
+    FoodDetailsAPI,
+    FoodTagsAPI
 )
 
 router = DefaultRouter()
 
 urlpatterns = [
+    path("restaurant-info/", RestaurantOwnerInfoAPI.as_view(), name="restaurant-info"),
     path("create/", RestaurantAPI.as_view(), name="restaurant"),
     path("update/", UpdateRestaurantAPI.as_view(), name="update"),
     path("add-category/", FoodCategoryAPI.as_view(), name="food-category"),
@@ -24,4 +27,5 @@ urlpatterns = [
     path("update-food/<int:pk>/", UpdateFoodItemAPI.as_view(), name="update-food"),
     path("food-items/", FoodCategoryItemAPI.as_view(), name="food-items"),
     path("food-details/<slug:slug>/", FoodDetailsAPI.as_view(), name="food-details"),
+    path("food-tags/", FoodTagsAPI.as_view(), name="food-tags"),
 ]

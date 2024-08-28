@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import Restaurant, FoodCategory, FoodItem
+from .models import Restaurant, FoodCategory, FoodItem, FoodTag
 from .serializers import (
     RestaurantSerializer,
     RestaurantFoodCategorySerializer,
     FoodCategorySerializer,
     FoodItemSerializer,
+    FoodTagSerializer,
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,6 +15,23 @@ from rest_framework.permissions import IsAuthenticated
 
 
 # Create your views here.
+
+
+class RestaurantOwnerInfoAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            restaurant = Restaurant.objects.get(owner=request.user)
+            serializer = RestaurantSerializer(restaurant)
+            return Response(serializer.data)
+        except Restaurant.DoesNotExist:
+            return Response(
+                {"error": "Restaurant not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+
 class RestaurantAPI(APIView):
 
     serializer_class = RestaurantSerializer
@@ -93,7 +111,7 @@ class FoodCategoriesAPI(APIView):
 
 
 class FoodsAPI(APIView):
-    
+
     def get(self, request):
         restaurant_query = request.query_params.get("restaurant")
         if restaurant_query:
@@ -102,6 +120,8 @@ class FoodsAPI(APIView):
             foods = FoodItem.objects.all()
         serializer = FoodItemSerializer(foods, many=True)
         return Response(serializer.data)
+
+
 
 
 class FoodItemAPI(APIView):
@@ -124,12 +144,14 @@ class FoodItemAPI(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class FoodDetailsAPI(APIView):
-    
+
     def get(self, request, slug):
         food = FoodItem.objects.get(slug=slug)
-        serializer= FoodItemSerializer(food, many=False)
+        serializer = FoodItemSerializer(food, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UpdateFoodItemAPI(APIView):
 
@@ -153,10 +175,10 @@ class UpdateFoodItemAPI(APIView):
             return Response(serializer.errors)
         except FoodItem.DoesNotExist:
             return Response({"error": "item not found"})
-        
+
 
 class FoodCategoryItemAPI(APIView):
-    
+
     def get(self, request):
         category_query = request.query_params.get("category")
         if category_query:
@@ -166,5 +188,13 @@ class FoodCategoryItemAPI(APIView):
             food_items = FoodItem.objects.all()
         serializer = FoodItemSerializer(food_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
+
+
+class FoodTagsAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        tags = FoodTag.objects.all()
+        serializer = FoodTagSerializer(tags, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

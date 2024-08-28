@@ -36,8 +36,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
     restaurant_name = serializers.ReadOnlyField(
         source="restaurant.name", read_only=True
     )
-    tags = FoodTagSerializer(many=True, read_only=True)
-    
+    food_tags = serializers.ReadOnlyField(source="tags.name", read_only=True)
 
     class Meta:
         model = FoodItem
@@ -49,7 +48,9 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "price",
             "is_available",
             "image",
-            "category_name", 
+            "category",
+            "category_name",
             "restaurant_name",
+            "food_tags",
             "tags",
         ]

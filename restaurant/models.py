@@ -10,6 +10,7 @@ class Restaurant(models.Model):
     phone_number = models.CharField(max_length=15)
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     is_approved = models.BooleanField(default=False)
+    cover_image=models.ImageField(upload_to="restaurant/cover/images", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -46,7 +47,7 @@ class FoodItem(models.Model):
     is_available = models.BooleanField(default=True)
     image = models.ImageField(upload_to="food/images/", null=True, blank=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="foods", blank=True, null=True)
-    tags = models.ManyToManyField(FoodTag, related_name="food_items")
+    tags = models.ForeignKey(FoodTag, on_delete=models.CASCADE, blank=True, null=True)
     
     def __str__(self):
         return f"{self.name}"
