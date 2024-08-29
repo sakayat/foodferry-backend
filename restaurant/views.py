@@ -54,9 +54,9 @@ class RestaurantAPI(APIView):
             return Response("already exits", status=status.HTTP_302_FOUND)
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user)
-            return Response(serializer.data)
-        return Response(serializer.errors)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateRestaurantAPI(APIView):
