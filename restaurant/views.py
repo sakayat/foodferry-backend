@@ -11,7 +11,7 @@ from .serializers import (
 from rest_framework.response import Response
 from rest_framework import status
 from accounts.permissions import IsRestaurantOwner
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 
 # Create your views here.
@@ -85,10 +85,27 @@ class UpdateRestaurantAPI(APIView):
             )
 
 
+class DeleteRestaurantAPI(APIView):
+
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def delete(self, request, id):
+        try:
+            restaurant = Restaurant.objects.get(id=id)
+        except Restaurant.DoesNotExist:
+            return Response(
+                {"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if request.user.role == "admin":
+            restaurant.delete()
+            return Response({"message": "restaurant delete successfully"})
+
+
 class RestaurantListAPI(APIView):
-    
+
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         restaurants = Restaurant.objects.all()
         serializer = RestaurantSerializer(restaurants, many=True)
@@ -98,15 +115,43 @@ class RestaurantListAPI(APIView):
 class FoodCategoryAPI(APIView):
 
     serializer_class = RestaurantFoodCategorySerializer
-    permission_classes = [IsRestaurantOwner]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
         categories = FoodCategory.objects.all()
         serializer = FoodCategorySerializer(categories, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = RestaurantFoodCategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class UpdateFoodCategoryAPI(APIView):
+    
+    serializer_class = RestaurantFoodCategorySerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request, id):
+        category = FoodCategory.objects.get(id=id)
+        serializer = FoodCategorySerializer(category)
+        return Response(serializer.data)
+
+    def put(sef, request, id):
+
+        try:
+            category = FoodCategory.objects.get(id=id)
+        except FoodCategory.DoesNotExist:
+            return Response(
+                {"error": "FoodCategory not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = RestaurantFoodCategorySerializer(
+            category, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
