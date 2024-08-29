@@ -16,7 +16,8 @@ from .views import (
     RemoveRestaurantFoodAPI,
     RestaurantListAPI,
     DeleteRestaurantAPI,
-    UpdateFoodCategoryAPI
+    UpdateFoodCategoryAPI,
+    DeleteFoodCategoryAPI
 )
 
 router = DefaultRouter()
@@ -29,6 +30,7 @@ urlpatterns = [
     path("delete/<int:id>/", DeleteRestaurantAPI.as_view(), name="delete"),
     path("food-category/", FoodCategoryAPI.as_view(), name="food-category"),
     path("update-category/<int:id>/", UpdateFoodCategoryAPI.as_view(), name="update-category"),
+    path("delete-category/<int:id>/", DeleteFoodCategoryAPI.as_view(), name="delete-category"),
     path("food-categories/", FoodCategoriesAPI.as_view(), name="food-categories"),
     path("foods/", FoodsAPI.as_view(), name="foods"),
     path("add-food-item/", FoodItemAPI.as_view(), name="add-food-item"),

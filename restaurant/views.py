@@ -128,16 +128,20 @@ class FoodCategoryAPI(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 
 class UpdateFoodCategoryAPI(APIView):
-    
+
     serializer_class = RestaurantFoodCategorySerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request, id):
-        category = FoodCategory.objects.get(id=id)
+        try:
+            category = FoodCategory.objects.get(id=id)
+        except FoodCategory.DoesNotExist:
+            return Response(
+                {"error": "food category not found"}, status=status.HTTP_404_NOT_FOUND
+            )
         serializer = FoodCategorySerializer(category)
         return Response(serializer.data)
 
@@ -156,6 +160,21 @@ class UpdateFoodCategoryAPI(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteFoodCategoryAPI(APIView):
+    
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def delete(self, request, id):
+        try:
+            category = FoodCategory.objects.get(id=id)
+            category.delete()
+            return Response({"item deleted successfully"}, status=status.HTTP_200_OK)
+        except FoodItem.DoesNotExist:
+            return Response(
+                {"error": "item not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class FoodCategoriesAPI(APIView):
