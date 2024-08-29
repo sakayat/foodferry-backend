@@ -29,7 +29,19 @@ class UserUpdateAPI(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk):
+
         user = CustomUser.objects.get(pk=pk)
+        
+        if request.user == user and user.role == "admin":
+            return Response(
+                {"error": "Admin cannot change their own permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if "role" in request.data and request.data["role"] == "admin":
+            user.is_staff = True
+        elif "role" in request.data and request.data["role"] != "admin":
+            user.is_staff = False
         serializer = CustomUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
