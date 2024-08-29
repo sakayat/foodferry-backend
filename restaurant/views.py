@@ -163,7 +163,7 @@ class UpdateFoodCategoryAPI(APIView):
 
 
 class DeleteFoodCategoryAPI(APIView):
-    
+
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def delete(self, request, id):
@@ -287,7 +287,12 @@ class FoodCategoryItemAPI(APIView):
 class FoodTagsAPI(APIView):
 
     serializer_class = FoodTagSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        tags = FoodTag.objects.all()
+        serializer = FoodTagSerializer(tags, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = FoodTagSerializer(data=request.data)
@@ -296,6 +301,50 @@ class FoodTagsAPI(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class UpdateFoodTagAPI(APIView):
+
+    serializer_class = FoodTagSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request, id):
+        try:
+            tag = FoodTag.objects.get(id=id)
+            serializer = FoodTagSerializer(tag)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except FoodTag.DoesNotExist:
+            return Response({"error": "tag not found"})
+
+    def put(self, request, id):
+        try:
+            tag = FoodTag.objects.get(id=id)
+        except FoodTag.DoesNotExist:
+            return Response(
+                {"error": "tag not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = FoodTagSerializer(tag, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteFoodTagAPI(APIView):
+
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def delete(self, request, id):
+        try:
+            tag = FoodTag.objects.get(id=id)
+            tag.delete()
+            return Response({"tag deleted successfully"}, status=status.HTTP_200_OK)
+        except FoodItem.DoesNotExist:
+            return Response(
+                {"error": "tag not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+class FoodTagListAPI(APIView):
+    
     def get(self, request):
         tags = FoodTag.objects.all()
         serializer = FoodTagSerializer(tags, many=True)

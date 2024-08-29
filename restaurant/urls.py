@@ -17,7 +17,10 @@ from .views import (
     RestaurantListAPI,
     DeleteRestaurantAPI,
     UpdateFoodCategoryAPI,
-    DeleteFoodCategoryAPI
+    DeleteFoodCategoryAPI,
+    UpdateFoodTagAPI,
+    DeleteFoodTagAPI,
+    FoodTagListAPI,
 )
 
 router = DefaultRouter()
@@ -29,8 +32,16 @@ urlpatterns = [
     path("list/", RestaurantListAPI.as_view(), name="list"),
     path("delete/<int:id>/", DeleteRestaurantAPI.as_view(), name="delete"),
     path("food-category/", FoodCategoryAPI.as_view(), name="food-category"),
-    path("update-category/<int:id>/", UpdateFoodCategoryAPI.as_view(), name="update-category"),
-    path("delete-category/<int:id>/", DeleteFoodCategoryAPI.as_view(), name="delete-category"),
+    path(
+        "update-category/<int:id>/",
+        UpdateFoodCategoryAPI.as_view(),
+        name="update-category",
+    ),
+    path(
+        "delete-category/<int:id>/",
+        DeleteFoodCategoryAPI.as_view(),
+        name="delete-category",
+    ),
     path("food-categories/", FoodCategoriesAPI.as_view(), name="food-categories"),
     path("foods/", FoodsAPI.as_view(), name="foods"),
     path("add-food-item/", FoodItemAPI.as_view(), name="add-food-item"),
@@ -38,6 +49,11 @@ urlpatterns = [
     path("food-items/", FoodCategoryItemAPI.as_view(), name="food-items"),
     path("food-details/<slug:slug>/", FoodDetailsAPI.as_view(), name="food-details"),
     path("food-tags/", FoodTagsAPI.as_view(), name="food-tags"),
+    path("update-tag/<int:id>/", UpdateFoodTagAPI.as_view(), name="update-tag"),
+    path("delete-tag/<int:id>/", DeleteFoodTagAPI.as_view(), name="delete-tag"),
+    path("tag-list/", FoodTagListAPI.as_view(), name="tag-list"),
     path("restaurant-foods/", RestaurantFoodsAPI.as_view(), name="restaurant-foods"),
-    path("delete-food-item/<int:id>/", RemoveRestaurantFoodAPI.as_view(), name="delete"),
+    path(
+        "delete-food-item/<int:id>/", RemoveRestaurantFoodAPI.as_view(), name="delete"
+    ),
 ]
