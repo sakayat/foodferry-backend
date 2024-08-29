@@ -13,7 +13,8 @@ from .views import (
     FoodDetailsAPI,
     FoodTagsAPI,
     RestaurantFoodsAPI,
-    RemoveRestaurantFoodAPI
+    RemoveRestaurantFoodAPI,
+    RestaurantListAPI
 )
 
 router = DefaultRouter()
@@ -22,6 +23,7 @@ urlpatterns = [
     path("restaurant-info/", RestaurantOwnerInfoAPI.as_view(), name="restaurant-info"),
     path("create/", RestaurantAPI.as_view(), name="restaurant"),
     path("update/", UpdateRestaurantAPI.as_view(), name="update"),
+    path("list/", RestaurantListAPI.as_view(), name="list"),
     path("add-category/", FoodCategoryAPI.as_view(), name="food-category"),
     path("food-categories/", FoodCategoriesAPI.as_view(), name="food-categories"),
     path("foods/", FoodsAPI.as_view(), name="foods"),

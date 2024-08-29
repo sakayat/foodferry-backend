@@ -85,6 +85,16 @@ class UpdateRestaurantAPI(APIView):
             )
 
 
+class RestaurantListAPI(APIView):
+    
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        restaurants = Restaurant.objects.all()
+        serializer = RestaurantSerializer(restaurants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class FoodCategoryAPI(APIView):
 
     serializer_class = RestaurantFoodCategorySerializer
