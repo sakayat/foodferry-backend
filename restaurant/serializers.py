@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Restaurant, FoodCategory, FoodItem, FoodTag
+from .models import Restaurant, FoodCategory, FoodItem, FoodTag, FoodFeedback
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
     restaurant_name = serializers.ReadOnlyField(
         source="restaurant.name", read_only=True
     )
-    food_tag = serializers.ReadOnlyField(source="tags.name", read_only=True)
+    food_tag = serializers.ReadOnlyField(source="tags.slug", read_only=True)
 
     class Meta:
         model = FoodItem
@@ -53,3 +53,13 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "tags",
             "food_tag",
         ]
+
+
+class FoodFeedbackSerializer(serializers.ModelSerializer):
+    firstname = serializers.ReadOnlyField(source="user.first_name")
+    lastname = serializers.ReadOnlyField(source="user.last_name")
+
+    class Meta:
+        model = FoodFeedback
+        fields = ["firstname", "lastname", "food_item", "comment", "rating"]
+        read_only_fields = ["user", "food_item"]

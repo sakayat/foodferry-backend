@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import Restaurant, FoodCategory, FoodItem, FoodTag
+from .models import Restaurant, FoodCategory, FoodItem, FoodTag, FoodFeedback
 from .serializers import (
     RestaurantSerializer,
     RestaurantFoodCategorySerializer,
     FoodCategorySerializer,
     FoodItemSerializer,
     FoodTagSerializer,
+    FoodFeedbackSerializer,
+    
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -349,3 +351,26 @@ class FoodTagListAPI(APIView):
         tags = FoodTag.objects.all()
         serializer = FoodTagSerializer(tags, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class FoodFeedbackAPI(APIView):
+    
+    serializer_class = FoodFeedbackSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, slug):
+        food_item = FoodItem.objects.get(slug=slug)
+        feedbacks = FoodFeedback.objects.filter(food_item=food_item)
+        serializer = FoodFeedbackSerializer(feedbacks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, slug):
+        try: 
+            food_item = FoodItem.objects.get(slug=slug)
+        except FoodItem.DoesNotExist:
+            return Response({"error": "item not found"})
+        serializer = FoodFeedbackSerializer(data=request.data, many=False)
+        if serializer.is_valid():
+            serializer.save(user=request.user, food_item=food_item)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        

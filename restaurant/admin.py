@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Restaurant, FoodItem, FoodCategory, FoodTag
+from .models import Restaurant, FoodItem, FoodCategory, FoodTag, FoodFeedback
 
 # Register your models here.
 
@@ -24,3 +24,4 @@ admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(FoodItem, FoodItemAdmin)
 admin.site.register(FoodCategory, FoodCategoryAdmin)
 admin.site.register(FoodTag, FoodTagAdmin)
+admin.site.register(FoodFeedback)
