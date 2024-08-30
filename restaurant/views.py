@@ -289,7 +289,7 @@ class FoodCategoryItemAPI(APIView):
 class FoodTagsAPI(APIView):
 
     serializer_class = FoodTagSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         tags = FoodTag.objects.all()
@@ -307,7 +307,7 @@ class FoodTagsAPI(APIView):
 class UpdateFoodTagAPI(APIView):
 
     serializer_class = FoodTagSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, id):
         try:
@@ -373,4 +373,13 @@ class FoodFeedbackAPI(APIView):
             serializer.save(user=request.user, food_item=food_item)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class FeedbackListAPI(APIView):
+    
+    def get(self, request, slug):
+        food_item = FoodItem.objects.get(slug=slug)
+        feedbacks = FoodFeedback.objects.filter(food_item=food_item)
+        serializer = FoodFeedbackSerializer(feedbacks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         

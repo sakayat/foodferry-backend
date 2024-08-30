@@ -59,20 +59,13 @@ class FoodItem(models.Model):
         return f"{self.name}"
 
 
-STAR_CHOICES = [
-    (1, "⭐"),
-    (2, "⭐⭐"),
-    (3, "⭐⭐⭐"),
-    (4, "⭐⭐⭐⭐"),
-    (5, "⭐⭐⭐⭐⭐"),
-]
 
 
 class FoodFeedback(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     food_item = models.ForeignKey(FoodItem, on_delete=models.CASCADE)
     comment = models.TextField()
-    rating = models.IntegerField(choices=STAR_CHOICES)
+    rating = models.PositiveIntegerField(default=1)
 
     def __str__(self) -> str:
         return f"{self.user.username }-comment {self.comment}-rating {self.rating}"
