@@ -8,7 +8,7 @@ from .serializers import (
     FoodItemSerializer,
     FoodTagSerializer,
     FoodFeedbackSerializer,
-    
+    RestaurantInfoSerializer
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -106,12 +106,28 @@ class DeleteRestaurantAPI(APIView):
 
 class RestaurantListAPI(APIView):
 
-    permission_classes = [IsAuthenticated]
-
     def get(self, request):
         restaurants = Restaurant.objects.all()
         serializer = RestaurantSerializer(restaurants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RestaurantFoodListAPI(APIView):
+
+    def get(self, request, slug):
+
+        restaurant_slug = Restaurant.objects.get(slug=slug)
+        foods = FoodItem.objects.filter(restaurant=restaurant_slug)
+        serializer = FoodItemSerializer(foods, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class RestaurantInfoAPI(APIView):
+    
+    def get(self, request, slug):
+        info = Restaurant.objects.get(slug=slug)
+        serializer = RestaurantInfoSerializer(info)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 
 class FoodCategoryAPI(APIView):
@@ -304,6 +320,15 @@ class FoodTagsAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CategoryFoodListAPI(APIView):
+
+    def get(self, request, slug):
+        category_slug = FoodCategory.objects.get(slug=slug)
+        foods = FoodItem.objects.filter(category=category_slug)
+        serializer = FoodItemSerializer(foods, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UpdateFoodTagAPI(APIView):
 
     serializer_class = FoodTagSerializer
@@ -345,26 +370,28 @@ class DeleteFoodTagAPI(APIView):
                 {"error": "tag not found"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+
 class FoodTagListAPI(APIView):
-    
+
     def get(self, request):
         tags = FoodTag.objects.all()
         serializer = FoodTagSerializer(tags, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+
 class FoodFeedbackAPI(APIView):
-    
+
     serializer_class = FoodFeedbackSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, slug):
         food_item = FoodItem.objects.get(slug=slug)
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def post(self, request, slug):
-        try: 
+        try:
             food_item = FoodItem.objects.get(slug=slug)
         except FoodItem.DoesNotExist:
             return Response({"error": "item not found"})
@@ -373,13 +400,12 @@ class FoodFeedbackAPI(APIView):
             serializer.save(user=request.user, food_item=food_item)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 class FeedbackListAPI(APIView):
-    
+
     def get(self, request, slug):
         food_item = FoodItem.objects.get(slug=slug)
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        

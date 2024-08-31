@@ -7,6 +7,13 @@ class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = "__all__"
+        
+
+class RestaurantInfoSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Restaurant
+        fields = ["id", "name", "address"]
 
 
 class RestaurantFoodCategorySerializer(serializers.ModelSerializer):
@@ -36,6 +43,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
         source="restaurant.name", read_only=True
     )
     food_tag = serializers.ReadOnlyField(source="tags.slug", read_only=True)
+    category_slug = serializers.ReadOnlyField(source="category.slug", read_only=True)
 
     class Meta:
         model = FoodItem
@@ -49,6 +57,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "image",
             "category",
             "category_name",
+            "category_slug",
             "restaurant_name",
             "tags",
             "food_tag",

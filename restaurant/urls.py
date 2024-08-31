@@ -22,7 +22,10 @@ from .views import (
     DeleteFoodTagAPI,
     FoodTagListAPI,
     FoodFeedbackAPI,
-    FeedbackListAPI
+    FeedbackListAPI,
+    CategoryFoodListAPI,
+    RestaurantFoodListAPI,
+    RestaurantInfoAPI
 )
 
 router = DefaultRouter()
@@ -60,4 +63,7 @@ urlpatterns = [
     ),
     path('feedback/<slug:slug>/', FoodFeedbackAPI.as_view(), name='food-feedback'),
     path('feedback-list/<slug:slug>/', FeedbackListAPI.as_view(), name='feedback-list'),
+    path('category-food-list/<slug:slug>/', CategoryFoodListAPI.as_view(), name='food-list'),
+    path('restaurant-food-list/<slug:slug>/', RestaurantFoodListAPI.as_view(), name='food-list'),
+    path('info/<slug:slug>/', RestaurantInfoAPI.as_view(), name='info'),
 ]
