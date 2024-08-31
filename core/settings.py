@@ -152,3 +152,5 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+CSRF_TRUSTED_ORIGINS = ["https://dot-eats-food-delivery-backend.onrender.com"]
+
