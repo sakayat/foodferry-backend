@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.response import Response
-from .serializers import OrderSerializer, OrderDetailsSerializer
+from .serializers import OrderSerializer, OrderDetailsSerializer, UserOrderSerializer
 from .models import Order, OrderDetails
 from carts.models import CartItem
 
@@ -40,6 +40,7 @@ class CreateOrderAPI(APIView):
             subtotal=subtotal,
             total=total,
             shipping_cost=shipping_cost,
+            
         )
 
         for item in cart_items:
@@ -49,7 +50,7 @@ class CreateOrderAPI(APIView):
                 item_price=item.food_item.price,
                 quantity=item.quantity,
                 item_image=item.food_item.image,
-                restaurant=item.food_item.restaurant.name,
+                restaurant=item.food_item.restaurant.slug,
                 status=order.status,
                 subtotal=item.quantity * item.food_item.price,
             )
@@ -71,3 +72,13 @@ class OrderListAPI(APIView):
             return Response(serializer.data)
         except OrderDetails.DoesNotExist:
             return Response(serializer.errors)
+
+
+class UserOrderAPI(APIView):
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request, slug):
+        orders = OrderDetails.objects.filter(restaurant=slug)
+        serializer = UserOrderSerializer(orders, many=True)
+        return Response(serializer.data)
