@@ -25,3 +25,12 @@ class UserOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderDetails
         fields = ["id", "item_name", "item_price", "quantity", "status", "subtotal", "username", "address", "email", "phone_number"]
+        
+    
+class UserOrderStatusSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = OrderDetails
+        fields = ["status"]
+        
+        

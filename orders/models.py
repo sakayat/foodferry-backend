@@ -4,6 +4,8 @@ from carts.models import CartItem
 from restaurant.models import FoodItem
 
 
+
+
 # Create your models here.
 class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -13,7 +15,7 @@ class Order(models.Model):
     last_name = models.CharField(max_length=100, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     payment_method = models.CharField(max_length=30, null=True, blank=True)
-    status = models.CharField(max_length=30, default="pending")
+    status = models.CharField(max_length=30, choices=[("Completed", "Completed"), ("Canceled", "Canceled")], default="Pending")
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     shipping_cost = models.DecimalField(max_digits=5, decimal_places=2, default=0)

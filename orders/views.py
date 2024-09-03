@@ -2,7 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.response import Response
-from .serializers import OrderSerializer, OrderDetailsSerializer, UserOrderSerializer
+from .serializers import (
+    OrderSerializer,
+    OrderDetailsSerializer,
+    UserOrderSerializer,
+    UserOrderStatusSerializer,
+)
 from .models import Order, OrderDetails
 from carts.models import CartItem
 
@@ -40,7 +45,6 @@ class CreateOrderAPI(APIView):
             subtotal=subtotal,
             total=total,
             shipping_cost=shipping_cost,
-            
         )
 
         for item in cart_items:
@@ -74,11 +78,37 @@ class OrderListAPI(APIView):
             return Response(serializer.errors)
 
 
-class UserOrderAPI(APIView):
-    
+class UserOrderListAPI(APIView):
+
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def get(self, request, slug):
         orders = OrderDetails.objects.filter(restaurant=slug)
         serializer = UserOrderSerializer(orders, many=True)
         return Response(serializer.data)
+
+
+class UserOrderStatusAPI(APIView):
+
+    serializer_class = UserOrderStatusSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, slug, id):
+        try:
+            order = OrderDetails.objects.get(restaurant=slug, id=id)
+        except OrderDetails.DoesNotExist:
+            return Response({"error": "not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = UserOrderSerializer(order)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, slug, id):
+        try:
+            order = OrderDetails.objects.get(restaurant=slug, id=id)
+        except OrderDetails.DoesNotExist:
+            return Response({"error": "not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserOrderStatusSerializer(order, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
