@@ -8,13 +8,13 @@ from .serializers import (
     FoodItemSerializer,
     FoodTagSerializer,
     FoodFeedbackSerializer,
-    RestaurantInfoSerializer
+    RestaurantInfoSerializer,
 )
 from rest_framework.response import Response
 from rest_framework import status
 from accounts.permissions import IsRestaurantOwner
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from rest_framework import viewsets, pagination
 
 # Create your views here.
 
@@ -112,22 +112,22 @@ class RestaurantListAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class RestaurantFoodListAPI(APIView):
+class RestaurantFoodListView(viewsets.ModelViewSet):
 
-    def get(self, request, slug):
+    queryset = FoodItem.objects.all()
+    serializer_class = FoodItemSerializer
 
-        restaurant_slug = Restaurant.objects.get(slug=slug)
-        foods = FoodItem.objects.filter(restaurant=restaurant_slug)
-        serializer = FoodItemSerializer(foods, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        slug = self.kwargs.get("slug")
+        return FoodItem.objects.filter(restaurant__slug=slug)
+
 
 class RestaurantInfoAPI(APIView):
-    
+
     def get(self, request, slug):
         info = Restaurant.objects.get(slug=slug)
         serializer = RestaurantInfoSerializer(info)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
 
 
 class FoodCategoryAPI(APIView):
@@ -409,5 +409,3 @@ class FeedbackListAPI(APIView):
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-

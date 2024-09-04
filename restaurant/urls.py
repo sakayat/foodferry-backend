@@ -24,11 +24,12 @@ from .views import (
     FoodFeedbackAPI,
     FeedbackListAPI,
     CategoryFoodListAPI,
-    RestaurantFoodListAPI,
-    RestaurantInfoAPI
+    RestaurantInfoAPI,
+    RestaurantFoodListView
 )
 
 router = DefaultRouter()
+
 
 urlpatterns = [
     path("restaurant-info/", RestaurantOwnerInfoAPI.as_view(), name="restaurant-info"),
@@ -64,6 +65,7 @@ urlpatterns = [
     path('feedback/<slug:slug>/', FoodFeedbackAPI.as_view(), name='food-feedback'),
     path('feedback-list/<slug:slug>/', FeedbackListAPI.as_view(), name='feedback-list'),
     path('category-food-list/<slug:slug>/', CategoryFoodListAPI.as_view(), name='food-list'),
-    path('restaurant-food-list/<slug:slug>/', RestaurantFoodListAPI.as_view(), name='food-list'),
     path('info/<slug:slug>/', RestaurantInfoAPI.as_view(), name='info'),
+    path("", include(router.urls)),
+    path('restaurant-food-list/<slug:slug>/', RestaurantFoodListView.as_view({'get': 'list'}), name='food-list'),
 ]

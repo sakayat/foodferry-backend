@@ -10,7 +10,7 @@ from .serializers import (
 )
 from .models import Order, OrderDetails
 from carts.models import CartItem
-
+from restaurant.models import Restaurant
 
 # Create your views here.
 
@@ -82,8 +82,12 @@ class UserOrderListAPI(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, slug):
-        orders = OrderDetails.objects.filter(restaurant=slug)
+    def get(self, request):
+        try:
+            restaurant = Restaurant.objects.get(owner=request.user)
+        except Restaurant.DoesNotExist:
+            return Response({"error": "restaurant owner not found"})
+        orders = OrderDetails.objects.filter(restaurant=restaurant.slug)
         serializer = UserOrderSerializer(orders, many=True)
         return Response(serializer.data)
 
@@ -93,17 +97,19 @@ class UserOrderStatusAPI(APIView):
     serializer_class = UserOrderStatusSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, slug, id):
+    def get(self, request, id):
         try:
-            order = OrderDetails.objects.get(restaurant=slug, id=id)
+            restaurant = Restaurant.objects.get(owner=request.user)
+            order = OrderDetails.objects.get(restaurant=restaurant.slug, id=id)
         except OrderDetails.DoesNotExist:
             return Response({"error": "not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = UserOrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, slug, id):
+    def post(self, request, id):
         try:
-            order = OrderDetails.objects.get(restaurant=slug, id=id)
+            restaurant = Restaurant.objects.get(owner=request.user)
+            order = OrderDetails.objects.get(restaurant=restaurant.slug, id=id)
         except OrderDetails.DoesNotExist:
             return Response({"error": "not found"}, status=status.HTTP_404_NOT_FOUND)
 
