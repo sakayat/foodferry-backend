@@ -15,6 +15,7 @@ from rest_framework import status
 from accounts.permissions import IsRestaurantOwner
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import viewsets, pagination
+from rest_framework.decorators import action
 
 # Create your views here.
 
@@ -213,6 +214,16 @@ class FoodsAPI(APIView):
         serializer = FoodItemSerializer(foods, many=True)
         return Response(serializer.data)
 
+class TagFoodListView(viewsets.ModelViewSet):
+    
+    queryset = FoodItem.objects.all()
+    serializer_class = FoodItemSerializer
+    
+    def get_queryset(self):
+        slug = self.kwargs.get("slug")
+        return FoodItem.objects.filter(tags__slug=slug)
+    
+    
 
 class FoodItemAPI(APIView):
 
@@ -320,13 +331,14 @@ class FoodTagsAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryFoodListAPI(APIView):
-
-    def get(self, request, slug):
-        category_slug = FoodCategory.objects.get(slug=slug)
-        foods = FoodItem.objects.filter(category=category_slug)
-        serializer = FoodItemSerializer(foods, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class CategoryFoodListAPI(viewsets.ModelViewSet):
+    
+    queryset = FoodCategory.objects.all()
+    serializer_class = FoodItemSerializer
+   
+    def get_queryset(self):
+        slug = self.kwargs.get("slug")
+        return FoodItem.objects.filter(category__slug=slug)
 
 
 class UpdateFoodTagAPI(APIView):
