@@ -214,16 +214,16 @@ class FoodsAPI(APIView):
         serializer = FoodItemSerializer(foods, many=True)
         return Response(serializer.data)
 
+
 class TagFoodListView(viewsets.ModelViewSet):
-    
+
     queryset = FoodItem.objects.all()
     serializer_class = FoodItemSerializer
-    
+
     def get_queryset(self):
         slug = self.kwargs.get("slug")
         return FoodItem.objects.filter(tags__slug=slug)
-    
-    
+
 
 class FoodItemAPI(APIView):
 
@@ -246,13 +246,14 @@ class FoodItemAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RestaurantFoodsAPI(APIView):
+class RestaurantFoodsAPI(viewsets.ModelViewSet):
+
+    queryset = FoodItem.objects.all()
+    serializer_class = FoodItemSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        restaurant = FoodItem.objects.filter(restaurant=request.user.restaurant)
-        serializer = FoodItemSerializer(restaurant, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return FoodItem.objects.filter(restaurant=self.request.user.restaurant)
 
 
 class RemoveRestaurantFoodAPI(APIView):
@@ -332,10 +333,10 @@ class FoodTagsAPI(APIView):
 
 
 class CategoryFoodListAPI(viewsets.ModelViewSet):
-    
+
     queryset = FoodCategory.objects.all()
     serializer_class = FoodItemSerializer
-   
+
     def get_queryset(self):
         slug = self.kwargs.get("slug")
         return FoodItem.objects.filter(category__slug=slug)

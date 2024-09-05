@@ -2,20 +2,17 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from .serializers import CustomUserSerializer
 from accounts.models import CustomUser
 
 
 # Create your views here.
-class UserListAPI(APIView):
-
+class UserListAPI(viewsets.ModelViewSet):
+    
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        users = CustomUser.objects.all()
-        serializer = CustomUserSerializer(users, many=True)
-        return Response(serializer.data)
 
 
 class UserUpdateAPI(APIView):

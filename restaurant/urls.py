@@ -59,7 +59,7 @@ urlpatterns = [
     path("update-tag/<int:id>/", UpdateFoodTagAPI.as_view(), name="update-tag"),
     path("delete-tag/<int:id>/", DeleteFoodTagAPI.as_view(), name="delete-tag"),
     path("tag-list/", FoodTagListAPI.as_view(), name="tag-list"),
-    path("restaurant-foods/", RestaurantFoodsAPI.as_view(), name="restaurant-foods"),
+    path("restaurant-foods/", RestaurantFoodsAPI.as_view({"get": "list"}), name="restaurant-foods"),
     path(
         "delete-food-item/<int:id>/", RemoveRestaurantFoodAPI.as_view(), name="delete"
     ),
