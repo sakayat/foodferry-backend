@@ -8,6 +8,7 @@ from .serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
     UserProfileSerializer,
+    SetNewPasswordSerializer
 )
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -20,6 +21,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import redirect
+from django.utils.encoding import force_str
 
 # Create your views here.
 class UserRegistrationAPI(APIView):
@@ -104,7 +106,7 @@ class UserProfileAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ResetPasswordAPI(APIView):
+class ForgetPasswordAPI(APIView):
 
     def post(self, request):
         email = request.data.get("email")
@@ -135,4 +137,25 @@ class ResetPasswordAPI(APIView):
         email.send()
         
         return Response({"message": "Password reset link sent successfully"}, status=status.HTTP_200_OK)
+    
+    
+    
 
+class RestPasswordAPI(APIView):
+    
+    def post(self, request, uidb64, token):
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = CustomUser.objects.get(pk=uid)
+        
+        if not default_token_generator.check_token(user, token):
+                return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        serializer = SetNewPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user.set_password(serializer.validated_data['password'])
+            user.save()
+            return Response({'success': 'Password reset successful'}, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    

@@ -29,11 +29,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         account = CustomUser(username=username, email=email)
         account.set_password(password)
-        
+
         account.is_active = False
         account.save()
         return account
-    
+
 
 class UserLoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
@@ -58,3 +58,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "profile_image",
         ]
         read_only_fields = ["id", "username", "email", "role"]
+
+
+class SetNewPasswordSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ["password", "confirm_password"]
