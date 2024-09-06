@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Your Account</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #286140;
+        margin-bottom: 20px;
+      }
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #286140;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">DotEats</div>
+    <p>Hello, <span>{{user}}</span></p>
+    <p>
+      Thank you for creating an account with DotEats. To complete your registration and activate your account, please click the button below:
+    </p>
+    <a href="{{ confirm_link }}" class="button">Activate Account</a>
+    <p>This link will expire in 24 hours for security reasons.</p>
+    <p>
+      If you didn't create an account with DotEats, you can ignore this email.
+    </p>
+    <p>
+      If you have any questions or need assistance, please don't hesitate to
+      contact our support team.
+    </p>
+    <p>Best regards,<br />The DotEats Team</p>
+    <p><em>Delivering delicious meals to your doorstep.</em></p>
+  </body>
+</html>

@@ -17,7 +17,9 @@ from accounts.models import CustomUser
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.shortcuts import redirect
 
 # Create your views here.
 class UserRegistrationAPI(APIView):
@@ -30,16 +32,29 @@ class UserRegistrationAPI(APIView):
             user = serializer.save()
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-            return Response(
-                {
-                    "message": "",
-                    "token": token,
-                    "uid": uid,
-                },
-                status.HTTP_200_OK,
+            confirm_link = f"http://127.0.0.1:8000/api/accounts/active/{uid}/{token}/"
+            email_subject = "Confirm Your Email"
+            email_body = render_to_string(
+                "confirm_mail.html", {"confirm_link": confirm_link}
             )
+            email = EmailMultiAlternatives(email_subject, "", to={user.email})
+            email.attach_alternative(email_body, "text/html")
+            email.send()
+            return Response({"message": "check your mail for active account"}, status.HTTP_200_OK)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    
+    
+def activate(request, uid64, token):
+    try:
+        uid = urlsafe_base64_decode(uid64).decode()
+        user = CustomUser._default_manager.get(pk=uid)
+    except CustomUser.DoesNotExist:
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return redirect(f"http://localhost:5173/sign-in/")
 
 
 class UserLoginAPI(APIView):

@@ -166,4 +166,6 @@ EMAIL_HOST_PASSWORD = os.getenv("APP_PASSWORD")
 
 VITE_BASE_URL = "http://localhost:5173"
 
+BASE_API_URL = "http://127.0.0.1:8000"
+
 DEFAULT_FROM_EMAIL = 'DotEats <noreply@doteats.com>'
