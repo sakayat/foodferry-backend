@@ -22,6 +22,10 @@ from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Create your views here.
 class UserRegistrationAPI(APIView):
@@ -34,7 +38,7 @@ class UserRegistrationAPI(APIView):
             user = serializer.save()
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            confirm_link = f"{settings.BASE_API_URL}/api/accounts/active/{uid}/{token}/"
+            confirm_link = f"{os.getenv("BASE_API_URL")}/api/accounts/active/{uid}/{token}/"
             email_subject = "Confirm Your Email"
             email_body = render_to_string(
                 "confirm_mail.html", {"confirm_link": confirm_link}
@@ -56,7 +60,7 @@ def activate(request, uid64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return redirect(f"{settings.VITE_BASE_URL}/sign-in/")
+        return redirect(f"{os.getenv("VITE_BASE_URL")}/sign-in/")
 
 
 class UserLoginAPI(APIView):

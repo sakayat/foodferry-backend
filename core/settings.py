@@ -154,7 +154,7 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ["https://dot-eats-food-delivery-backend.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://foodferry-backend-aq64.onrender.com"]
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -164,8 +164,4 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv("USER_EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("APP_PASSWORD")
 
-VITE_BASE_URL = "http://localhost:5173"
-
-BASE_API_URL = "http://127.0.0.1:8000"
-
-DEFAULT_FROM_EMAIL = 'DotEats <noreply@doteats.com>'
+DEFAULT_FROM_EMAIL = 'FoodFerry <noreply@foodferry.com>'
