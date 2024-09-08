@@ -82,9 +82,3 @@ class FoodFeedbackSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["user", "food_item"]
 
-
-class SearchFoodSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = FoodItem
-        fields = [""]
