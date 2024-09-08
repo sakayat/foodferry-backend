@@ -26,7 +26,8 @@ from .views import (
     CategoryFoodListAPI,
     RestaurantInfoAPI,
     RestaurantFoodListView,
-    TagFoodListView
+    TagFoodListView,
+    FoodSearchAPI
 )
 
 router = DefaultRouter()
@@ -70,4 +71,5 @@ urlpatterns = [
     path("", include(router.urls)),
     path('restaurant-food-list/<slug:slug>/', RestaurantFoodListView.as_view({'get': 'list'}), name='food-list'),
     path('tag-food-list/<slug:slug>/', TagFoodListView.as_view({'get': 'list'}), name='food-list'),
+    path("search-food/", FoodSearchAPI.as_view({"get": "list"}), name="search-foods")
 ]

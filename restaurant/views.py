@@ -14,8 +14,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from accounts.permissions import IsRestaurantOwner
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework import viewsets, pagination
-from rest_framework.decorators import action
+from rest_framework import viewsets
+from rest_framework import filters
 
 # Create your views here.
 
@@ -422,3 +422,11 @@ class FeedbackListAPI(APIView):
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class FoodSearchAPI(viewsets.ModelViewSet):
+
+    queryset = FoodItem.objects.all()
+    serializer_class = FoodItemSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name", "category__name"]
