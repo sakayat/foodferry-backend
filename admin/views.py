@@ -8,8 +8,20 @@ from accounts.models import CustomUser
 
 
 # Create your views here.
+
+
+class UserListForRestaurantCreationAPI(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        users = CustomUser.objects.all()
+        serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserListAPI(viewsets.ModelViewSet):
-    
+
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]
@@ -28,7 +40,7 @@ class UserUpdateAPI(APIView):
     def put(self, request, pk):
 
         user = CustomUser.objects.get(pk=pk)
-        
+
         if request.user == user and user.role == "admin":
             return Response(
                 {"error": "Admin cannot change their own permissions."},
