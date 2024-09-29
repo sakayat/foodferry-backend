@@ -34,13 +34,13 @@ ALLOWED_HOSTS = [".vercel.app", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "whitenoise.runserver_nostatic",
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "restaurant",
     "carts",
     "orders",
-    
 ]
 
 REST_FRAMEWORK = {
@@ -95,7 +94,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
+WSGI_APPLICATION = "core.wsgi.app"
 
 
 # Database
@@ -137,12 +136,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-STORAGES = {
-    # ...
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
 
 
 # Internationalization
@@ -188,5 +181,4 @@ EMAIL_HOST_PASSWORD = os.getenv("APP_PASSWORD")
 DEFAULT_FROM_EMAIL = "FoodFerry <noreply@foodferry.com>"
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
+STATIC_ROOT = BASE_DIR / "staticfiles"
