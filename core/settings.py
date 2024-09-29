@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-bx!+-=^#@4-7%8b9rq(=ahjos=f$^hc!f)ri-bn^id$m(i)cq2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".vercel.app"]
+ALLOWED_HOSTS = [".vercel.app", "127.0.0.1"]
 
 
 # Application definition
@@ -67,6 +67,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -105,6 +106,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "postgres",
+#         "USER": "postgres.mjhgizlfajygyriciyka",
+#         "PASSWORD": "3bQHBJN6VUrEPy9g",
+#         "HOST": "aws-0-ap-southeast-1.pooler.supabase.com",
+#         "PORT": "6543",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -166,3 +177,8 @@ EMAIL_HOST_USER = os.getenv("USER_EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("APP_PASSWORD")
 
 DEFAULT_FROM_EMAIL = "FoodFerry <noreply@foodferry.com>"
+
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

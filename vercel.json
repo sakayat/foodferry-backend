@@ -1,18 +1,19 @@
 {
-    "builds":[
-        {
-            "src":"core/wsgi.py",
-            "use":"@vercel/python",
-            "config":{
-                "maxLambadaSize":"250mb",
-                "runtime":"python3.12"
-            }
-        }
-    ],
-    "routes":[
-        {
-            "src":"/(.*)",
-            "dest":"core/wsgi.py"
-        }
-    ]
+  "builds": [
+    {
+      "src": "core/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambadaSize": "250mb",
+        "runtime": "python3.12"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "core/wsgi.py"
+    }
+  ],
+  "rewrites": [{ "source": "/static/(.*)", "destination": "/staticfiles/$1" }]
 }
