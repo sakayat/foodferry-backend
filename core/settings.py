@@ -172,7 +172,7 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ["https://foodferry-backend-aq64.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://foodferry-backend.vercel.app"]
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
