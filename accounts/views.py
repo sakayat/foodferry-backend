@@ -104,7 +104,7 @@ class UserProfileAPI(APIView):
         serializer = UserProfileSerializer(request.user)
         return Response(serializer.data)
 
-    def put(self, request):
+    def put(self, request, format=None):
         serializer = UserProfileSerializer(
             request.user, data=request.data, partial=True
         )

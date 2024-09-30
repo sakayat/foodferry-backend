@@ -9,8 +9,9 @@ class CustomUser(AbstractUser):
         ("restaurant_owner", "Restaurant Owner"),
         ("admin", "Admin"),
     ]
+    
     email = models.EmailField(unique=True)
-    profile_image = models.ImageField(upload_to="profile/images/", default="")
+    profile_image = models.TextField()
     phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
     role = models.CharField(max_length=20, choices=ROLL_CHOICE, default="customer")
     
