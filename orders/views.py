@@ -87,7 +87,7 @@ class UserOrderListAPI(APIView):
             restaurant = Restaurant.objects.get(owner=request.user)
         except Restaurant.DoesNotExist:
             return Response({"error": "restaurant owner not found"})
-        orders = OrderDetails.objects.filter(restaurant=restaurant.slug).ordered("")
+        orders = OrderDetails.objects.filter(restaurant=restaurant.slug)
         serializer = UserOrderSerializer(orders, many=True)
         return Response(serializer.data)
 
