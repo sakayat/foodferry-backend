@@ -170,10 +170,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = ["https://foodferry-backend.vercel.app"]
-
+CORS_ALLOWED_ORIGINS = [
+    "https://foodferry.vercel.app",
+]
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
@@ -184,8 +184,5 @@ EMAIL_HOST_PASSWORD = os.getenv("APP_PASSWORD")
 
 DEFAULT_FROM_EMAIL = "FoodFerry <noreply@foodferry.com>"
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800
-
-FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800
 
 
