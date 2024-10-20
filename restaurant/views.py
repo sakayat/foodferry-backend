@@ -285,9 +285,9 @@ class UpdateFoodItemAPI(APIView):
         try:
             food = FoodItem.objects.get(restaurant=request.user.restaurant, pk=pk)
             serializer = FoodItemSerializer(food, many=False)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except FoodItem.DoesNotExist:
-            return Response({"error": "item not found"})
+            return Response({"error": "item not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk):
         try:
@@ -295,10 +295,10 @@ class UpdateFoodItemAPI(APIView):
             serializer = FoodItemSerializer(food, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(restaurant=request.user.restaurant)
-                return Response(serializer.data)
-            return Response(serializer.errors)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except FoodItem.DoesNotExist:
-            return Response({"error": "item not found"})
+            return Response({"error": "item not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class FoodCategoryItemAPI(APIView):
