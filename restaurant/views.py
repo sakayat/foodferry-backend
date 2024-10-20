@@ -208,9 +208,9 @@ class FoodsAPI(APIView):
     def get(self, request):
         restaurant_query = request.query_params.get("restaurant")
         if restaurant_query:
-            foods = FoodItem.objects.filter(restaurant_slug=restaurant_query)
+            foods = FoodItem.objects.filter(restaurant_slug=restaurant_query).select_related('category', 'restaurant').prefetch_related('tags')
         else:
-            foods = FoodItem.objects.all()
+            foods = FoodItem.objects.all().select_related('category', 'restaurant').prefetch_related('tags')
         serializer = FoodItemSerializer(foods, many=True)
         return Response(serializer.data)
 
