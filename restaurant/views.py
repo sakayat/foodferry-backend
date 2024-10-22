@@ -16,6 +16,7 @@ from accounts.permissions import IsRestaurantOwner
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import viewsets
 from rest_framework import filters
+from django.core.cache import cache
 
 # Create your views here.
 
@@ -204,19 +205,30 @@ class FoodCategoriesAPI(APIView):
 
 
 class FoodsAPI(APIView):
-
     def get(self, request):
         restaurant_query = request.query_params.get("restaurant")
+        cache_key = f"foods_{restaurant_query}" if restaurant_query else "foods_all"
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            return Response(cached_data)
         if restaurant_query:
-            foods = FoodItem.objects.filter(restaurant_slug=restaurant_query).select_related('category', 'restaurant').prefetch_related('tags')
+            foods = (
+                FoodItem.objects.filter(restaurant_slug=restaurant_query)
+                .select_related("category", "restaurant")
+                .prefetch_related("tags")
+            )
         else:
-            foods = FoodItem.objects.all().select_related('category', 'restaurant').prefetch_related('tags')
+            foods = (
+                FoodItem.objects.all()
+                .select_related("category", "restaurant")
+                .prefetch_related("tags")
+            )
         serializer = FoodItemSerializer(foods, many=True)
+        cache.set(cache_key, serializer.data, timeout=3600)
         return Response(serializer.data)
 
 
 class TagFoodListView(viewsets.ModelViewSet):
-
     queryset = FoodItem.objects.all()
     serializer_class = FoodItemSerializer
 
@@ -226,7 +238,6 @@ class TagFoodListView(viewsets.ModelViewSet):
 
 
 class FoodItemAPI(APIView):
-
     serializer_class = FoodItemSerializer
     permission_classes = [IsRestaurantOwner]
 
@@ -247,7 +258,6 @@ class FoodItemAPI(APIView):
 
 
 class RestaurantFoodsAPI(viewsets.ModelViewSet):
-
     queryset = FoodItem.objects.all()
     serializer_class = FoodItemSerializer
     permission_classes = [IsAuthenticated]
@@ -257,7 +267,6 @@ class RestaurantFoodsAPI(viewsets.ModelViewSet):
 
 
 class RemoveRestaurantFoodAPI(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, id):
@@ -270,7 +279,6 @@ class RemoveRestaurantFoodAPI(APIView):
 
 
 class FoodDetailsAPI(APIView):
-
     def get(self, request, slug):
         food = FoodItem.objects.get(slug=slug)
         serializer = FoodItemSerializer(food, many=False)
@@ -278,7 +286,6 @@ class FoodDetailsAPI(APIView):
 
 
 class UpdateFoodItemAPI(APIView):
-
     serializer_class = FoodItemSerializer
 
     def get(self, request, pk):
@@ -287,7 +294,9 @@ class UpdateFoodItemAPI(APIView):
             serializer = FoodItemSerializer(food, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except FoodItem.DoesNotExist:
-            return Response({"error": "item not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "item not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
     def put(self, request, pk):
         try:
@@ -298,32 +307,35 @@ class UpdateFoodItemAPI(APIView):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except FoodItem.DoesNotExist:
-            return Response({"error": "item not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "item not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class FoodCategoryItemAPI(APIView):
-
     def get(self, request):
         category_query = request.query_params.get("category")
+        cache_key = f"category_{category_query}" if category_query else "category_all"
+        cache_data = cache.get(cache_key)
+        if cache_data is not None:
+            return Response(cache_data)
         if category_query:
             category = FoodCategory.objects.get(slug=category_query)
             food_items = FoodItem.objects.filter(category=category)
         else:
             food_items = FoodItem.objects.all()
         serializer = FoodItemSerializer(food_items, many=True)
+        cache.set(cache_key, serializer.data, timeout=3600)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class FoodTagsAPI(APIView):
-
     serializer_class = FoodTagSerializer
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         tags = FoodTag.objects.all()
         serializer = FoodTagSerializer(tags, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
     def post(self, request):
         serializer = FoodTagSerializer(data=request.data)
         if serializer.is_valid():
@@ -333,21 +345,17 @@ class FoodTagsAPI(APIView):
 
 
 class CategoryFoodListAPI(viewsets.ModelViewSet):
-
     queryset = FoodCategory.objects.all()
     serializer_class = FoodItemSerializer
-
     def get_queryset(self):
         slug = self.kwargs.get("slug")
         return FoodItem.objects.filter(category__slug=slug)
 
 
 class UpdateFoodTagAPI(APIView):
-
     serializer_class = FoodTagSerializer
     permission_classes = [IsAuthenticated]
-
-    def get(self, request, id):
+    def get(self, id):
         try:
             tag = FoodTag.objects.get(id=id)
             serializer = FoodTagSerializer(tag)
@@ -370,10 +378,8 @@ class UpdateFoodTagAPI(APIView):
 
 
 class DeleteFoodTagAPI(APIView):
-
     permission_classes = [IsAuthenticated, IsAdminUser]
-
-    def delete(self, request, id):
+    def delete(self, id):
         try:
             tag = FoodTag.objects.get(id=id)
             tag.delete()
@@ -385,7 +391,6 @@ class DeleteFoodTagAPI(APIView):
 
 
 class FoodTagListAPI(APIView):
-
     def get(self, request):
         tags = FoodTag.objects.all()
         serializer = FoodTagSerializer(tags, many=True)
@@ -393,11 +398,9 @@ class FoodTagListAPI(APIView):
 
 
 class FoodFeedbackAPI(APIView):
-
     serializer_class = FoodFeedbackSerializer
     permission_classes = [IsAuthenticated]
-
-    def get(self, request, slug):
+    def get(self, slug):
         food_item = FoodItem.objects.get(slug=slug)
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)
@@ -416,8 +419,7 @@ class FoodFeedbackAPI(APIView):
 
 
 class FeedbackListAPI(APIView):
-
-    def get(self, request, slug):
+    def get(self, slug):
         food_item = FoodItem.objects.get(slug=slug)
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)
@@ -425,7 +427,6 @@ class FeedbackListAPI(APIView):
 
 
 class FoodSearchAPI(viewsets.ModelViewSet):
-
     queryset = FoodItem.objects.all()
     serializer_class = FoodItemSerializer
     filter_backends = [filters.SearchFilter]
