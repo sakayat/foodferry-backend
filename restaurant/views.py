@@ -199,8 +199,13 @@ class DeleteFoodCategoryAPI(APIView):
 
 class FoodCategoriesAPI(APIView):
     def get(self, request):
+        cache_key = "food_categories"
+        cache_data = cache.get(cache_key)
+        if cache_data is not None:
+            return Response(cache_data)
         categories = FoodCategory.objects.all()
         serializer = FoodCategorySerializer(categories, many=True)
+        cache.set(cache_key, serializer.data, 60 * 60)
         return Response(serializer.data)
 
 
@@ -315,17 +320,12 @@ class UpdateFoodItemAPI(APIView):
 class FoodCategoryItemAPI(APIView):
     def get(self, request):
         category_query = request.query_params.get("category")
-        cache_key = f"category_{category_query}" if category_query else "category_all"
-        cache_data = cache.get(cache_key)
-        if cache_data is not None:
-            return Response(cache_data)
         if category_query:
             category = FoodCategory.objects.get(slug=category_query)
             food_items = FoodItem.objects.filter(category=category)
         else:
             food_items = FoodItem.objects.all()
         serializer = FoodItemSerializer(food_items, many=True)
-        cache.set(cache_key, serializer.data, timeout=3600)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
