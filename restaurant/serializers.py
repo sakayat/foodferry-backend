@@ -2,41 +2,6 @@ from rest_framework import serializers
 from .models import Restaurant, FoodCategory, FoodItem, FoodTag, FoodFeedback
 
 
-class RestaurantSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Restaurant
-        fields = "__all__"
-        
-
-class RestaurantInfoSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Restaurant
-        fields = ["id", "name", "address"]
-
-
-class RestaurantFoodCategorySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FoodCategory
-        fields = "__all__"
-
-
-class FoodCategorySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FoodCategory
-        fields = "__all__"
-
-
-class FoodTagSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FoodTag
-        fields = ["id", "name", "slug"]
-
-
 class FoodItemSerializer(serializers.ModelSerializer):
     category_name = serializers.ReadOnlyField(source="category.name", read_only=True)
     restaurant_name = serializers.ReadOnlyField(
@@ -64,6 +29,55 @@ class FoodItemSerializer(serializers.ModelSerializer):
         ]
 
 
+class RestaurantSerializer(serializers.ModelSerializer):
+    email = serializers.ReadOnlyField(source="owner.email")
+    total_foods = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Restaurant
+        fields = [
+            "id",
+            "name",
+            "email",
+            "phone_number",
+            "address",
+            "cover_image",
+            "total_foods",
+            "slug"
+        ]
+
+    def get_total_foods(self, obj):
+        return obj.foods.count()
+
+
+class RestaurantInfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Restaurant
+        fields = ["id", "name", "address"]
+
+
+class RestaurantFoodCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FoodCategory
+        fields = "__all__"
+
+
+class FoodCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FoodCategory
+        fields = "__all__"
+
+
+class FoodTagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FoodTag
+        fields = ["id", "name", "slug"]
+
+
 class FoodFeedbackSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source="user.username")
     firstname = serializers.ReadOnlyField(source="user.first_name")
@@ -81,4 +95,3 @@ class FoodFeedbackSerializer(serializers.ModelSerializer):
             "rating",
         ]
         read_only_fields = ["user", "food_item"]
-

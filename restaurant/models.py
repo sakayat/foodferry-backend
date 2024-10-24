@@ -11,7 +11,7 @@ class Restaurant(models.Model):
     phone_number = models.CharField(max_length=15)
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     is_approved = models.BooleanField(default=False)
-    cover_image = models.CharField(default="https://ibb.co.com/xXrms8v")
+    cover_image = models.CharField(default="https://i.ibb.co.com/YPVDWT9/empty.jpg")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -22,7 +22,7 @@ class Restaurant(models.Model):
 class FoodCategory(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True, null=True)
-    image = models.CharField(default="https://ibb.co.com/xXrms8v")
+    image = models.CharField(default="https://i.ibb.co.com/YPVDWT9/empty.jpg")
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -47,7 +47,7 @@ class FoodItem(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     category = models.ForeignKey(FoodCategory, on_delete=models.CASCADE)
     is_available = models.BooleanField(default=True)
-    image = models.CharField(default="https://ibb.co.com/xXrms8v")
+    image = models.CharField(default="https://i.ibb.co.com/YPVDWT9/empty.jpg")
     restaurant = models.ForeignKey(
         Restaurant, on_delete=models.CASCADE, related_name="foods"
     )

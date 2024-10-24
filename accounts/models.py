@@ -11,7 +11,7 @@ class CustomUser(AbstractUser):
     ]
     
     email = models.EmailField(unique=True)
-    profile_image = models.CharField(default="https://ibb.co.com/xXrms8v")
+    profile_image = models.CharField(default="https://i.ibb.co.com/YPVDWT9/empty.jpg")
     phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
     role = models.CharField(max_length=20, choices=ROLL_CHOICE, default="customer")
     
