@@ -400,7 +400,7 @@ class FoodTagListAPI(APIView):
 class FoodFeedbackAPI(APIView):
     serializer_class = FoodFeedbackSerializer
     permission_classes = [IsAuthenticated]
-    def get(self, slug):
+    def get(self, request, slug):
         food_item = FoodItem.objects.get(slug=slug)
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)
@@ -419,7 +419,7 @@ class FoodFeedbackAPI(APIView):
 
 
 class FeedbackListAPI(APIView):
-    def get(self, slug):
+    def get(self, request, slug):
         food_item = FoodItem.objects.get(slug=slug)
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
         serializer = FoodFeedbackSerializer(feedbacks, many=True)

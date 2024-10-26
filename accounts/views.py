@@ -74,11 +74,12 @@ class UserLoginAPI(APIView):
             email = serializer.validated_data["email"]
             password = serializer.validated_data["password"]
             user = authenticate(request, username=email, password=password)
+            print(user)
             if user:
                 token, _ = Token.objects.get_or_create(user=user)
                 login(request, user)
                 return Response(
-                    {"token": token.key, "user_id": user.id}, status.HTTP_200_OK
+                    {"token": token.key, "user_id": user.id, "role": user.role}, status.HTTP_200_OK
                 )
             else:
                 return Response(

@@ -55,9 +55,6 @@ urlpatterns = [
     ),
     
     # food item urls
-    path("items/", FoodsAPI.as_view(), name="food-items"),
-    path("item/add", FoodItemAPI.as_view(), name="food-item-add"),
-    path("item/update/<int:pk>/", UpdateFoodItemAPI.as_view(), name="food-item-update"),
     path("category/items/", FoodCategoryItemAPI.as_view(), name="food-category-items"),
     path("details/<slug:slug>/", FoodDetailsAPI.as_view(), name="food-details"),
     
@@ -68,6 +65,9 @@ urlpatterns = [
     path("tag-list/", FoodTagListAPI.as_view(), name="tag-list"),
     
     # restaurant foods urls
+    path("items/", FoodsAPI.as_view(), name="food-items"),
+    path("item/add", FoodItemAPI.as_view(), name="food-item-add"),
+    path("item/update/<int:pk>/", UpdateFoodItemAPI.as_view(), name="food-item-update"),
     path(
         "foods/",
         RestaurantFoodsAPI.as_view({"get": "list"}),
@@ -86,7 +86,7 @@ urlpatterns = [
         name="food-list",
     ),
     
-    # restaurant dashboard urls
+    # restaurant urls
     path("info/<slug:slug>/", RestaurantInfoAPI.as_view(), name="restaurant-info"),
     path(
         "restaurant-food-list/<slug:slug>/",
