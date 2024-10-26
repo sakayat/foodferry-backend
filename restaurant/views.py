@@ -17,6 +17,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import viewsets
 from rest_framework import filters
 from django.core.cache import cache
+from orders.models import OrderDetails
+from django.db.models import Sum
 
 # Create your views here.
 
@@ -431,3 +433,34 @@ class FoodSearchAPI(viewsets.ModelViewSet):
     serializer_class = FoodItemSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "category__name"]
+
+
+class RestaurantDataAPI(APIView):
+    
+    def get(self, request):
+        
+        restaurant = Restaurant.objects.get(owner=request.user)
+        foods = FoodItem.objects.filter(restaurant=restaurant)
+        total_products = foods.count()
+        
+        orders = OrderDetails.objects.filter(restaurant=restaurant.slug)
+        total_orders = orders.count()
+        pending_orders = orders.filter(status='pending').count()
+        completed_orders = orders.filter(status="Completed").count()
+        
+        total_sales = 0
+        
+        for order in orders:
+            if order.subtotal and order.status == "Completed":
+                total_sales += order.item_price
+      
+        response_data = {
+            'total_products': total_products,
+            'total_orders': total_orders,
+            'pending_orders': pending_orders,
+            "completed_orders": completed_orders,
+            'total_sales': total_sales,
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+
