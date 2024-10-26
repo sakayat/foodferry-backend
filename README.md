@@ -1,5 +1,3 @@
-Here’s the updated README with direct API endpoint usage without example comments:
-
 # Food Delivery Website
 
 ## Overview
