@@ -1,7 +1,7 @@
-# Food Delivery Website
+# FoodFeery
 
 ## Overview
-This is a food delivery website built using Django and Django REST Framework. Users can browse and order food from their favorite restaurants, while restaurant owners can manage their offerings and orders. Administrators have full control over the platform, managing users, restaurants, and food categories.
+FoodFeery is a food delivery website built using Django and Django REST Framework. Users can browse and order food from their favorite restaurants, while restaurant owners can manage their offerings and orders. Administrators have full control over the platform, managing users, restaurants, and food categories.
 
 ## Features
 
@@ -40,14 +40,13 @@ This is a food delivery website built using Django and Django REST Framework. Us
 
 ### Restaurant Owner Endpoints
 - **GET /restaurant/info/tripti-catering**: Get information about Tripti Catering restaurant.
-- **POST /restaurant/create**: Create a new restaurant.
 - **PATCH /restaurant/update/tripti-catering**: Update Tripti Catering restaurant details.
 - **DELETE /restaurant/delete/tripti-catering**: Delete Tripti Catering restaurant.
 
 ### Admin Endpoints
 - **GET /admin/users**: List all users.
+- **PATCH /admin/update-user/4/role/**: Update user role by ID.
 - **POST /admin/users/change-permission**: Change user permissions.
-- **POST /admin/restaurant/create**: Create a new restaurant.
 - **PATCH /admin/restaurant/update/tripti-catering**: Update Tripti Catering restaurant details.
 - **DELETE /admin/restaurant/delete/tripti-catering**: Delete Tripti Catering restaurant.
 - **GET /admin/categories**: List all food categories.
@@ -74,9 +73,8 @@ This is a food delivery website built using Django and Django REST Framework. Us
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/sakayat/foodferry-backend.git
-   
-   cd foodferry-backend
+   git clone https://github.com/yourusername/foodfeery.git
+   cd foodfeery
    ```
 
 2. Create a virtual environment and activate it:
