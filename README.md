@@ -73,7 +73,7 @@ FoodFeery is a food delivery website built using Django and Django REST Framewor
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/foodfeery.git
+   git clone https://github.com/sakayat/foodferry-backend.git
    cd foodfeery
    ```
 
