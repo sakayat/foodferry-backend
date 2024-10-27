@@ -334,10 +334,12 @@ class FoodCategoryItemAPI(APIView):
 class FoodTagsAPI(APIView):
     serializer_class = FoodTagSerializer
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
         tags = FoodTag.objects.all()
         serializer = FoodTagSerializer(tags, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
     def post(self, request):
         serializer = FoodTagSerializer(data=request.data)
         if serializer.is_valid():
@@ -349,6 +351,7 @@ class FoodTagsAPI(APIView):
 class CategoryFoodListAPI(viewsets.ModelViewSet):
     queryset = FoodCategory.objects.all()
     serializer_class = FoodItemSerializer
+
     def get_queryset(self):
         slug = self.kwargs.get("slug")
         return FoodItem.objects.filter(category__slug=slug)
@@ -357,6 +360,7 @@ class CategoryFoodListAPI(viewsets.ModelViewSet):
 class UpdateFoodTagAPI(APIView):
     serializer_class = FoodTagSerializer
     permission_classes = [IsAuthenticated]
+
     def get(self, id):
         try:
             tag = FoodTag.objects.get(id=id)
@@ -381,6 +385,7 @@ class UpdateFoodTagAPI(APIView):
 
 class DeleteFoodTagAPI(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
+
     def delete(self, id):
         try:
             tag = FoodTag.objects.get(id=id)
@@ -402,6 +407,7 @@ class FoodTagListAPI(APIView):
 class FoodFeedbackAPI(APIView):
     serializer_class = FoodFeedbackSerializer
     permission_classes = [IsAuthenticated]
+
     def get(self, request, slug):
         food_item = FoodItem.objects.get(slug=slug)
         feedbacks = FoodFeedback.objects.filter(food_item=food_item)
@@ -436,31 +442,32 @@ class FoodSearchAPI(viewsets.ModelViewSet):
 
 
 class RestaurantDataAPI(APIView):
-    
+
     def get(self, request):
-        
+
         restaurant = Restaurant.objects.get(owner=request.user)
         foods = FoodItem.objects.filter(restaurant=restaurant)
         total_products = foods.count()
-        
+
         orders = OrderDetails.objects.filter(restaurant=restaurant.slug)
         total_orders = orders.count()
-        pending_orders = orders.filter(status='pending').count()
+        pending_orders = orders.filter(status="pending").count()
         completed_orders = orders.filter(status="Completed").count()
-        
+        cancel_orders = orders.filter(status="Canceled").count()
+
         total_sales = 0
-        
+
         for order in orders:
             if order.subtotal and order.status == "Completed":
                 total_sales += order.item_price
-      
-        response_data = {
-            'total_products': total_products,
-            'total_orders': total_orders,
-            'pending_orders': pending_orders,
-            "completed_orders": completed_orders,
-            'total_sales': total_sales,
-        }
-        
-        return Response(response_data, status=status.HTTP_200_OK)
 
+        response_data = {
+            "total_products": total_products,
+            "total_orders": total_orders,
+            "pending_orders": pending_orders,
+            "completed_orders": completed_orders,
+            "total_sales": total_sales,
+            "cancel_orders": cancel_orders,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
