@@ -18,7 +18,8 @@ from rest_framework import viewsets
 from rest_framework import filters
 from django.core.cache import cache
 from orders.models import OrderDetails
-from django.db.models import Sum
+from datetime import datetime
+from collections import defaultdict
 
 # Create your views here.
 
@@ -456,10 +457,28 @@ class RestaurantDataAPI(APIView):
         cancel_orders = orders.filter(status="Canceled").count()
 
         total_sales = 0
+        month_names = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ]
+        monthly_sales = {month: 0 for month in month_names}
 
         for order in orders:
             if order.subtotal and order.status == "Completed":
                 total_sales += order.item_price
+                month_index = order.created_at.month - 1
+                month_name = month_names[month_index]
+                monthly_sales[month_name] += order.item_price
 
         response_data = {
             "total_products": total_products,
@@ -468,6 +487,7 @@ class RestaurantDataAPI(APIView):
             "completed_orders": completed_orders,
             "total_sales": total_sales,
             "cancel_orders": cancel_orders,
+            "monthly_sales": monthly_sales,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
