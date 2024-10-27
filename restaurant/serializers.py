@@ -26,6 +26,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "restaurant_name",
             "tags",
             "food_tag",
+            "created_at"
         ]
 
 

@@ -449,7 +449,6 @@ class RestaurantDataAPI(APIView):
         restaurant = Restaurant.objects.get(owner=request.user)
         foods = FoodItem.objects.filter(restaurant=restaurant)
         total_products = foods.count()
-
         orders = OrderDetails.objects.filter(restaurant=restaurant.slug)
         total_orders = orders.count()
         pending_orders = orders.filter(status="pending").count()
@@ -472,14 +471,12 @@ class RestaurantDataAPI(APIView):
             "Dec",
         ]
         monthly_sales = {month: 0 for month in month_names}
-
         for order in orders:
             if order.subtotal and order.status == "Completed":
                 total_sales += order.item_price
                 month_index = order.created_at.month - 1
                 month_name = month_names[month_index]
                 monthly_sales[month_name] += order.item_price
-
         response_data = {
             "total_products": total_products,
             "total_orders": total_orders,
@@ -491,3 +488,15 @@ class RestaurantDataAPI(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class RecentProductsAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        products = FoodItem.objects.filter(restaurant=request.user.restaurant).order_by(
+            "-created_at"
+        )[:5]
+        serializer = FoodItemSerializer(products, many=True)
+        return Response(serializer.data)
