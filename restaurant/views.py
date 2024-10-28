@@ -22,6 +22,7 @@ from orders.models import Order
 from accounts.models import CustomUser
 from orders.serializers import OrderDetailsSerializer
 
+
 class RestaurantOwnerInfoAPI(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -385,7 +386,7 @@ class UpdateFoodTagAPI(APIView):
 class DeleteFoodTagAPI(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
-    def delete(self, id):
+    def delete(self, request, id):
         try:
             tag = FoodTag.objects.get(id=id)
             tag.delete()
@@ -503,14 +504,17 @@ class AdminDataAPI(APIView):
 
     def get(self, request):
         orders = OrderDetails.objects.all()
-        
+
         total_revenue = 0
-        
+
+        weeks = ["Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu"]
+        daily_revenue = {day: 0 for day in weeks}
+
         for order in orders:
             if order.status == "Completed":
                 total_revenue += order.subtotal
-                print(order.subtotal)
-        print(total_revenue)
+                day_name = order.created_at.strftime("%a")
+                daily_revenue[day_name] += order.subtotal
 
         active_restaurants = Restaurant.objects.filter(is_approved=True).count()
         active_customers = CustomUser.objects.filter(is_active=True).count()
@@ -520,6 +524,7 @@ class AdminDataAPI(APIView):
             "total_revenue": total_revenue,
             "active_restaurants": active_restaurants,
             "active_customers": active_customers,
+            "daily_revenue": daily_revenue,
         }
-        
+
         return Response(response_data, status=status.HTTP_200_OK)
