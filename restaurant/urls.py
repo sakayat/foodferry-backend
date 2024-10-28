@@ -29,7 +29,8 @@ from .views import (
     TagFoodListView,
     FoodSearchAPI,
     RestaurantDataAPI,
-    RecentProductsAPI
+    RecentProductsAPI,
+    AdminDataAPI,
 )
 
 router = DefaultRouter()
@@ -107,5 +108,6 @@ urlpatterns = [
     # others
     path('data/', RestaurantDataAPI.as_view(), name='restaurant-data'),
     path("recent-products/", RecentProductsAPI.as_view(), name='recent-products'),
+    path('admin/data/', AdminDataAPI.as_view(), name='admin-data'),
     path("", include(router.urls)),
 ]

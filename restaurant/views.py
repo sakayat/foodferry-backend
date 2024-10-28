@@ -18,11 +18,9 @@ from rest_framework import viewsets
 from rest_framework import filters
 from django.core.cache import cache
 from orders.models import OrderDetails
-from datetime import datetime
-from collections import defaultdict
-
-# Create your views here.
-
+from orders.models import Order
+from accounts.models import CustomUser
+from orders.serializers import OrderDetailsSerializer
 
 class RestaurantOwnerInfoAPI(APIView):
 
@@ -445,7 +443,6 @@ class FoodSearchAPI(viewsets.ModelViewSet):
 class RestaurantDataAPI(APIView):
 
     def get(self, request):
-
         restaurant = Restaurant.objects.get(owner=request.user)
         foods = FoodItem.objects.filter(restaurant=restaurant)
         total_products = foods.count()
@@ -491,7 +488,6 @@ class RestaurantDataAPI(APIView):
 
 
 class RecentProductsAPI(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -500,3 +496,30 @@ class RecentProductsAPI(APIView):
         )[:5]
         serializer = FoodItemSerializer(products, many=True)
         return Response(serializer.data)
+
+
+class AdminDataAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        orders = OrderDetails.objects.all()
+        
+        total_revenue = 0
+        
+        for order in orders:
+            if order.status == "Completed":
+                total_revenue += order.subtotal
+                print(order.subtotal)
+        print(total_revenue)
+
+        active_restaurants = Restaurant.objects.filter(is_approved=True).count()
+        active_customers = CustomUser.objects.filter(is_active=True).count()
+
+        response_data = {
+            "total_orders": orders.count(),
+            "total_revenue": total_revenue,
+            "active_restaurants": active_restaurants,
+            "active_customers": active_customers,
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
