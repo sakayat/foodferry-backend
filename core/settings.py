@@ -119,9 +119,9 @@ DATABASES = {
 }
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
     }
 }
 
@@ -142,7 +142,6 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
 
 
 # Internationalization
@@ -169,7 +168,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -180,7 +178,7 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://foodferry.vercel.app",
+    "https://foodferry.vercel.app"
 ]
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -191,6 +189,3 @@ EMAIL_HOST_USER = os.getenv("USER_EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("APP_PASSWORD")
 
 DEFAULT_FROM_EMAIL = "FoodFerry <noreply@foodferry.com>"
-
-
-

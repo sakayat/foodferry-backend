@@ -16,6 +16,11 @@ class OrderSerializer(serializers.ModelSerializer):
             "status",
         ]
 
+class OrderPaymentSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Order
+        fields = "__all__"
 
 class OrderDetailsSerializer(serializers.ModelSerializer):
 
