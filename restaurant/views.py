@@ -20,7 +20,7 @@ from django.core.cache import cache
 from orders.models import OrderDetails
 from orders.models import Order
 from accounts.models import CustomUser
-from orders.serializers import OrderDetailsSerializer
+from django.db.models import Q
 
 
 class RestaurantOwnerInfoAPI(APIView):
@@ -449,7 +449,7 @@ class RestaurantDataAPI(APIView):
         total_products = foods.count()
         orders = OrderDetails.objects.filter(restaurant=restaurant.slug)
         total_orders = orders.count()
-        pending_orders = orders.filter(status="pending").count()
+        pending_orders = orders.filter(Q(status="pending") | Q(status="Paid")).count()
         completed_orders = orders.filter(status="Completed").count()
         cancel_orders = orders.filter(status="Canceled").count()
 
